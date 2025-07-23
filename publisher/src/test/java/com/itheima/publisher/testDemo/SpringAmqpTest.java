@@ -13,6 +13,9 @@ public class SpringAmqpTest {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
+    /**
+     * 点对点模式
+     */
     @Test
     public void testSimpleQueue() {
         // 队列名称
@@ -23,6 +26,10 @@ public class SpringAmqpTest {
         rabbitTemplate.convertAndSend(queueName, message);
     }
 
+    /**
+     * 测试工作模式
+     * @throws InterruptedException
+     */
     @Test
     public void testWorkQueue() throws InterruptedException {
         // 队列名称
@@ -37,6 +44,17 @@ public class SpringAmqpTest {
     }
 
 
-
+    /**
+     * 测试发布订阅模式
+     */
+    @Test
+    public void testFanoutExchange() {
+        // 交换机名称
+        String exchangeName = "itcast.fanout";
+        // 消息
+        String message = "hello, everyone";
+        // 发送消息
+        rabbitTemplate.convertAndSend(exchangeName, "", message);
+    }
 
 }
