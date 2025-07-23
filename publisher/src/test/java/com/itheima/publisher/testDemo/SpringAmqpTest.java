@@ -57,4 +57,33 @@ public class SpringAmqpTest {
         rabbitTemplate.convertAndSend(exchangeName, "", message);
     }
 
+
+    /**
+     * 测试路由模式
+     */
+    @Test
+    public void testDirectExchange() {
+        // 交换机名称
+        String exchangeName = "itcast.direct";
+        // 消息
+        String message = "hello, red";
+        // 发送消息
+        rabbitTemplate.convertAndSend(exchangeName, "blue", message);
+    }
+
+    /**
+     * 测试主题模式
+     */
+    @Test
+    public void testTopicExchange() {
+        // 交换机名称
+        String exchangeName = "itcast.topic";
+        // 消息
+        String message = "china.newsqaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+        // 发送消息
+        rabbitTemplate.convertAndSend(exchangeName, "china.news", message);
+    }
+
+
+
 }

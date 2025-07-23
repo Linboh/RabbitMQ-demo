@@ -40,4 +40,29 @@ public class SpringRabbitListener {
 
 
 
+    //路由模式
+    @RabbitListener(queues = "direct.queue1")
+    public void listenSimpleQueueMessage5(String msg) throws InterruptedException {
+        System.out.println("spring 消费者5接收到消息：【" + msg + "】");
+    }
+
+    //路由模式
+    @RabbitListener(queues = "direct.queue2")
+    public void listenSimpleQueueMessage6(String msg) throws InterruptedException {
+        System.out.println("spring 消费者6接收到消息：【" + msg + "】");
+    }
+
+
+    //主题模式
+    @RabbitListener(queues = "topic.queue1")
+    public void listenSimpleQueueMessage7(String msg) throws InterruptedException {
+        System.out.println("spring 消费者7接收到消息：【" + msg + "】");
+    }
+
+    //主题模式
+    @RabbitListener(queues = "topic.queue2")
+    public void listenSimpleQueueMessage8(String msg) throws InterruptedException {
+        System.out.println("spring 消费者8接收到消息：【" + msg + "】");
+    }
+
 }
