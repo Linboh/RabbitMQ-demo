@@ -1,5 +1,9 @@
 package com.itheima.consumer.simpledemo;
 
+import org.springframework.amqp.core.ExchangeTypes;
+import org.springframework.amqp.rabbit.annotation.Exchange;
+import org.springframework.amqp.rabbit.annotation.Queue;
+import org.springframework.amqp.rabbit.annotation.QueueBinding;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
@@ -41,13 +45,21 @@ public class SpringRabbitListener {
 
 
     //路由模式
-    @RabbitListener(queues = "direct.queue1")
+    @RabbitListener(bindings = @QueueBinding(
+            value = @Queue(name = "direct.queue1"),
+            exchange = @Exchange(name = "itcast.direct", type = ExchangeTypes.DIRECT),
+            key = {"red", "blue"}
+    ))
     public void listenSimpleQueueMessage5(String msg) throws InterruptedException {
         System.out.println("spring 消费者5接收到消息：【" + msg + "】");
     }
 
     //路由模式
-    @RabbitListener(queues = "direct.queue2")
+    @RabbitListener(bindings = @QueueBinding(
+            value = @Queue(name = "direct.queue1"),
+            exchange = @Exchange(name = "itcast.direct", type = ExchangeTypes.DIRECT),
+            key = {"blue"}
+    ))
     public void listenSimpleQueueMessage6(String msg) throws InterruptedException {
         System.out.println("spring 消费者6接收到消息：【" + msg + "】");
     }
