@@ -12,3 +12,6 @@ spring:
     virtual-host: /lin # 虚拟主机
     username: lin # 用户名
     password: 123 # 密码
+    listener:
+      simple:
+        prefetch: 1 # 每次只能获取一条消息，处理完成才能获取下一个消息

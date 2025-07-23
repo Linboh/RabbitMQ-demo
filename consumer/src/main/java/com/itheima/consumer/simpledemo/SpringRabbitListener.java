@@ -12,8 +12,14 @@ public class SpringRabbitListener {
     @RabbitListener(queues = "simple.queue")
     public void listenSimpleQueueMessage(String msg) throws InterruptedException {
         System.out.println("spring 消费者接收到消息：【" + msg + "】");
+        Thread.sleep(200);
+
+    }
 
 
-
+    @RabbitListener(queues = "simple.queue")
+    public void listenSimpleQueueMessage2(String msg) throws InterruptedException {
+        System.out.println("spring 消费者2接收到消息：【" + msg + "】");
+        Thread.sleep(1000);
     }
 }
