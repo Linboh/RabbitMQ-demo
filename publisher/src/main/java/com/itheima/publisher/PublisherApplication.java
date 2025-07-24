@@ -15,7 +15,6 @@ public class PublisherApplication {
 
     @Bean
     public MessageConverter messageConverter(){
-
         return new Jackson2JsonMessageConverter();
     }
 }

@@ -1,11 +1,15 @@
 package com.itheima.publisher.testDemo;
 
+import com.itheima.publisher.config.RabbitMQConfig;
 import org.junit.jupiter.api.Test;
+import org.springframework.amqp.core.MessageDeliveryMode;
+import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 
 @SpringBootTest
@@ -81,8 +85,10 @@ public class SpringAmqpTest {
         String exchangeName = "itcast.topic";
         // 消息
         String message = "china.newsqaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-        // 发送消息
-        rabbitTemplate.convertAndSend(exchangeName, "china.news", message);
+        for (int i = 0; i < 1000000; i++) {
+            // 发送消息
+            rabbitTemplate.convertAndSend(exchangeName, "china.news", message);
+        }
     }
 
 
@@ -94,7 +100,79 @@ public class SpringAmqpTest {
         hashMap.put("age",18);
 
         String exchangeName = "simple.queue";
-        rabbitTemplate.convertAndSend(exchangeName,hashMap);
+        for (int i = 0; i < 1000000; i++) {
+            rabbitTemplate.convertAndSend(exchangeName,hashMap);
+        }
+    }
+
+    /**
+     * 发送消息示例（带 CorrelationData）
+     */
+    @Test
+    public void testSendMsg2() {
+        // 交换机名称
+        String exchangeName = "itcast.direct";
+        // 消息
+        String message = "hello, everyone";
+
+        // 创建 CorrelationData
+        CorrelationData correlationData = new CorrelationData(UUID.randomUUID().toString());
+
+        // 发送消息
+        rabbitTemplate.convertAndSend(
+                exchangeName,     // 交换机名
+                "blue",         // 路由键
+                message,        // 消息内容
+                correlationData    // 消息唯一 ID
+        );
+    }
+
+    @Test
+    public void sendPersistentMessage() {
+
+        // 消息
+        String message = "hello, everyone";
+        // 发送消息
+        for (int i = 0; i < 1000000; i++) {
+            rabbitTemplate.convertAndSend(
+                    RabbitMQConfig.EXCHANGE_NAME,
+                    RabbitMQConfig.ROUTING_KEY,
+                    message,
+                    msg -> {
+                        msg.getMessageProperties().setDeliveryMode(MessageDeliveryMode.NON_PERSISTENT);
+                        return msg;
+                    }
+            );
+        }
+
+    }
+
+
+    /**
+     * 测试路由模式
+     */
+    @Test
+    public void testFanoutExchange1() {
+        // 交换机名称
+        String queueName = "fanout.queue1";
+        // 消息
+        String message = "hello, red";
+        // 发送消息
+        rabbitTemplate.convertAndSend(queueName, message);
+    }
+
+
+
+
+    @Test
+    public void testConsumer() {
+        // 交换机名称
+        String exchangeName = "Consumer.exchange";
+
+        // 消息
+        String message = "hello, red";
+        // 发送消息
+        rabbitTemplate.convertAndSend(exchangeName,null, message);
     }
 
 

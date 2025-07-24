@@ -1,6 +1,14 @@
+
+server:
+  port: 8000  # 改成你想要的端口
+
+
+
 logging:
   pattern:
     dateformat: MM-dd HH:mm:ss:SSS
+    level:
+      root: debug
 
 
 
@@ -12,6 +20,13 @@ spring:
     virtual-host: /lin # 虚拟主机
     username: lin # 用户名
     password: 123 # 密码
+
     listener:
       simple:
         prefetch: 1 # 每次只能获取一条消息，处理完成才能获取下一个消息
+        retry:
+          enabled: true # 开启重试
+#          max-attempts: 3 # 最大重试次数
+#          initial-interval: 1000 # 初始重试间隔时间
+#          multiplier: 2 # 重试间隔时间倍数
+#          max-interval: 5000 # 最大重试间隔时间
