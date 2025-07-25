@@ -1,9 +1,12 @@
 package com.itheima.consumer.simpledemo;
 
+import com.itheima.consumer.simpledemo.config.RabbitDelayConfig;
 import org.springframework.amqp.core.ExchangeTypes;
 import org.springframework.amqp.rabbit.annotation.*;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 
 
@@ -109,6 +112,21 @@ public class SpringRabbitListener {
         System.out.println("spring 消费者接收到error消息：【" + msg + "】");
     }
 
+
+    // 延迟队列
+    @RabbitListener(queues = RabbitDelayConfig.REAL_QUEUE)
+    public void handleMessage(String msg) {
+        System.out.println("收到延迟消息：" + msg + "，当前时间：" + LocalDateTime.now());
+    }
+
+    @RabbitListener(bindings = @QueueBinding(
+            value = @Queue(name = "delay2.queue", durable = "true"),
+            exchange = @Exchange(name = "delay2.direct", delayed = "true"),
+            key = "delay2"
+    ))
+    public void listenDelayMessage(String msg){
+        System.out.println("接收到delay2.queue的延迟消息时间" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm:ss")));
+    }
 
 
 }

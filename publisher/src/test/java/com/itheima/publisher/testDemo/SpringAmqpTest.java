@@ -8,6 +8,8 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -17,6 +19,17 @@ public class SpringAmqpTest {
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
+
+
+    // 真正消费的队列（死信路由后的目标队列）
+    public static final String REAL_QUEUE = "real.queue";
+    public static final String REAL_EXCHANGE = "real.exchange";
+    public static final String REAL_ROUTING_KEY = "real.routing.key";
+
+    // 延迟队列（设置TTL + 死信路由）
+    public static final String DELAY_QUEUE = "delay.queue";
+    public static final String DELAY_EXCHANGE = "delay.exchange";
+    public static final String DELAY_ROUTING_KEY = "delay.routing.key";
 
     /**
      * 点对点模式
@@ -197,20 +210,32 @@ public class SpringAmqpTest {
 
     @Test
     public void test3() {
-        // 交换机名称
-        String exchangeName = "text.direct";
+        String msg = "主人你好，我是延迟60秒的消息";
+        rabbitTemplate.convertAndSend(
+                DELAY_EXCHANGE,
+                DELAY_ROUTING_KEY,
+                msg
+        );
 
-        // 消息
-        String message = "text.exchange";
-
-        // 发送消息
-        rabbitTemplate.convertAndSend(exchangeName,"text", message,
-                msg -> {
-                    msg.getMessageProperties().setDeliveryMode(MessageDeliveryMode.PERSISTENT);
-                    return msg;
-                });
+        System.out.println("消息发送成功" + msg);
+    }
 
 
+    @Test
+    void testPublisherDelayMessage() {
+        // 1.创建消息
+        String msg = "hello, delayed message";
+        // 2.发送消息，利用消息后置处理器添加消息头
+        rabbitTemplate.convertAndSend(
+               "delay2.direct",
+                "delay2",
+                msg,
+                message -> {
+                    message.getMessageProperties().setDelay(5000); // 设置延迟时间
+                    return message;
+                }
+        );
+        System.out.println("发送时间：" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm:ss")));
     }
 
 
