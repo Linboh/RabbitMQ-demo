@@ -96,5 +96,19 @@ public class SpringRabbitListener {
 
 
 
+    @RabbitListener(bindings = @QueueBinding(
+        value = @Queue(
+                name = "text.queue",
+                durable = "true",
+                arguments = @Argument(name = "x-queue-mode", value = "lazy")
+        ),
+        exchange = @Exchange(name = "text.direct", type = ExchangeTypes.DIRECT),
+        key = "text"
+    ))
+    public void listentTextQueueMessage(String msg) throws InterruptedException {
+        System.out.println("spring 消费者接收到error消息：【" + msg + "】");
+    }
+
+
 
 }

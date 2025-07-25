@@ -170,9 +170,47 @@ public class SpringAmqpTest {
         String exchangeName = "Consumer.exchange";
 
         // 消息
-        String message = "hello, red";
+        String message = "Consumer.exchange";
         // 发送消息
         rabbitTemplate.convertAndSend(exchangeName,null, message);
+    }
+
+
+    @Test
+    public void test2() {
+        // 交换机名称
+        String exchangeName = "text.direct";
+
+        // 消息
+        String message = "text.exchange";
+        for (int i = 0; i < 1000000; i++) {
+            // 发送消息
+            rabbitTemplate.convertAndSend(exchangeName,"text", message,
+                    msg -> {
+                msg.getMessageProperties().setDeliveryMode(MessageDeliveryMode.PERSISTENT);
+                return msg;
+            });
+        }
+
+    }
+
+
+    @Test
+    public void test3() {
+        // 交换机名称
+        String exchangeName = "text.direct";
+
+        // 消息
+        String message = "text.exchange";
+
+        // 发送消息
+        rabbitTemplate.convertAndSend(exchangeName,"text", message,
+                msg -> {
+                    msg.getMessageProperties().setDeliveryMode(MessageDeliveryMode.PERSISTENT);
+                    return msg;
+                });
+
+
     }
 
 
