@@ -1,6 +1,8 @@
 package com.itheima.consumer.simpledemo;
 
+import com.itheima.config.MqConstants;
 import com.itheima.consumer.simpledemo.config.RabbitDelayConfig;
+import com.itheima.utils.MultiDelayMessage;
 import org.springframework.amqp.core.ExchangeTypes;
 import org.springframework.amqp.rabbit.annotation.*;
 import org.springframework.stereotype.Component;
@@ -127,6 +129,8 @@ public class SpringRabbitListener {
     public void listenDelayMessage(String msg){
         System.out.println("接收到delay2.queue的延迟消息时间" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm:ss")));
     }
+
+
 
 
 }

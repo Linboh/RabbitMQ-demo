@@ -1,6 +1,9 @@
 package com.itheima.publisher.testDemo;
 
+import com.itheima.config.MqConstants;
 import com.itheima.publisher.config.RabbitMQConfig;
+import com.itheima.utils.DelayUtils;
+import com.itheima.utils.MultiDelayMessage;
 import org.junit.jupiter.api.Test;
 import org.springframework.amqp.core.MessageDeliveryMode;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
@@ -10,8 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
 
 
 @SpringBootTest
@@ -238,6 +240,29 @@ public class SpringAmqpTest {
         System.out.println("发送时间：" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm:ss")));
     }
 
+    /**
+     * 测试发送延迟消息
+     */
+    @Test
+    public void testPublisher() {
+
+        List<Long> delays = DelayUtils.generateDelayStepsByMinutes(3, 5);
+
+
+        MultiDelayMessage<String> msg = new MultiDelayMessage<>("1",delays);
+        int delayVal = msg.removeNextDelay().intValue();
+        // 4.2.发送延迟消息
+        rabbitTemplate.convertAndSend(MqConstants.DELAY_EXCHANGE, MqConstants.DELAY_ORDER_ROUTING_KEY, msg,
+                message -> {
+                    message.getMessageProperties().setDelay(delayVal);
+                    return message;
+                });
+
+        System.out.println(delayVal);
+        System.out.println("发送消息成功时间" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm:ss")));
+    }
+
+    
 
 
 }
